@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-        /**
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -36,37 +36,53 @@ class HomeController extends Controller
         $uangHariIni = RiwayatPembelian::where('tanggal_pembelian', '=', date('Y-m-d'))->sum('total_harga');
         $uangKemarin = RiwayatPembelian::where('tanggal_pembelian', '=', $tanggalSebelumnya)->sum('total_harga');
         $uangSelisih = $uangHariIni - $uangKemarin;
-        if ($uangKemarin < $uangHariIni) {
-            $persenHariIni =  intval($uangSelisih / $uangKemarin * 100) * -1;
+        if ($uangKemarin == 0) {
+            $persenHariIni = $uangHariIni * 100;
         } else {
-            $persenHariIni =  intval($uangSelisih / $uangKemarin * 100);
+            if ($uangKemarin > $uangHariIni) {
+                $persenHariIni = intval($uangSelisih / $uangKemarin * 100);
+            } else {
+                $persenHariIni = intval($uangSelisih / $uangKemarin * 100);
+            }
         }
 
         $uangMingguIni = RiwayatPembelian::where('tanggal_pembelian', '>=', $mingguAwal)->where('tanggal_pembelian', '<=', $mingguAkhir)->sum('total_harga');
         $uangMingguLalu = RiwayatPembelian::where('tanggal_pembelian', '>=', $mingguLaluAwal)->where('tanggal_pembelian', '<=', $mingguLaluAkhir)->sum('total_harga');
         $uangMingguSelisih = $uangMingguIni - $uangMingguLalu;
-        if ($uangMingguLalu < $uangMingguIni) {
-            $persenMingguIni =  intval($uangMingguSelisih / $uangMingguLalu * 100) * -1;
+        if ($uangMingguLalu == 0) {
+            $persenMingguIni = $uangMingguIni * 100;
         } else {
-            $persenMingguIni =  intval($uangMingguSelisih / $uangMingguLalu * 100);
+            if ($uangMingguLalu > $uangMingguIni) {
+                $persenMingguIni = intval($uangMingguSelisih / $uangMingguLalu * 100);
+            } else {
+                $persenMingguIni = intval($uangMingguSelisih / $uangMingguLalu * 100);
+            }
         }
-        
+
         $uangBulanIni = RiwayatPembelian::whereMonth('tanggal_pembelian', $bulanIni)->sum('total_harga');
         $uangBulanLalu = RiwayatPembelian::whereMonth('tanggal_pembelian', $bulanLalu)->sum('total_harga');
         $uangBulanSelisih = $uangBulanIni - $uangBulanLalu;
-        if ($uangBulanLalu > $uangBulanIni) {
-            $persenBulanIni =  intval($uangBulanSelisih / $uangBulanLalu * 100) * -1;
+        if ($uangBulanLalu == 0) {
+            $persenBulanIni = $uangBulanIni * 100;
         } else {
-            $persenBulanIni =  intval($uangBulanSelisih / $uangBulanLalu * 100);
+            if ($uangBulanLalu > $uangBulanIni) {
+                $persenBulanIni = intval($uangBulanSelisih / $uangBulanLalu * 100);
+            } else {
+                $persenBulanIni = intval($uangBulanSelisih / $uangBulanLalu * 100);
+            }
         }
-        
+
         $userBaru = User::whereMonth('created_at', $bulanIni)->count();
         $userBaruBulanLalu = User::whereMonth('created_at', $bulanLalu)->count();
         $userBaruSelisih = $userBaru - $userBaruBulanLalu;
-        if ($userBaruBulanLalu > $uangBulanIni) {
-            $persenUserBaru =  intval($userBaruSelisih / $userBaruBulanLalu * 100) * -1;
+        if ($userBaruBulanLalu == 0) {
+            $persenUserBaru = $userBaru * 100;
         } else {
-            $persenUserBaru =  intval($userBaruSelisih / $userBaruBulanLalu * 100);
+            if ($userBaruBulanLalu > $uangBulanIni) {
+                $persenUserBaru = intval($userBaruSelisih / $userBaruBulanLalu * 100);
+            } else {
+                $persenUserBaru = intval($userBaruSelisih / $userBaruBulanLalu * 100);
+            }
         }
         $tahunIni = Carbon::now()->year;
         $tahunLalu = Carbon::now()->subYear()->year;
@@ -85,10 +101,14 @@ class HomeController extends Controller
         $persenGrafik = RiwayatPembelian::whereYear('tanggal_pembelian', $tahunIni)->count();
         $persenGrafikLalu = RiwayatPembelian::whereYear('tanggal_pembelian', $tahunLalu)->count();
         $persenGrafikSelisih = $persenGrafik - $persenGrafikLalu;
-        if ($persenGrafikLalu > $persenGrafik) {
-            $persenGrafikTahunIni =  intval($persenGrafikSelisih / $persenGrafikLalu * 100) * -1;
+        if ($persenGrafikLalu == 0) {
+            $persenGrafikTahunIni = $persenGrafik * 100;
         } else {
-            $persenGrafikTahunIni =  intval($persenGrafikSelisih / $persenGrafikLalu * 100);
+            if ($persenGrafikLalu > $persenGrafik) {
+                $persenGrafikTahunIni = intval($persenGrafikSelisih / $persenGrafikLalu * 100);
+            } else {
+                $persenGrafikTahunIni = intval($persenGrafikSelisih / $persenGrafikLalu * 100);
+            }
         }
         return view('pages.dashboard', compact('uangHariIni', 'uangMingguIni', 'uangBulanIni', 'userBaru', 'persenHariIni', 'persenMingguIni', 'persenBulanIni', 'persenUserBaru', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'persenGrafikTahunIni', 'tahunLalu'));
     }

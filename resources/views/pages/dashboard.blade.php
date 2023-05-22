@@ -112,7 +112,7 @@
                                         +{{ $userBaru }}
                                     </h5>
                                     <p class="mb-0">
-                                        @if ($persenBulanIni < 0)
+                                        @if ($persenUserBaru < 0)
                                             <span
                                                 class="text-danger text-sm font-weight-bolder">{{ $persenUserBaru }}%</span>
                                             since last month
